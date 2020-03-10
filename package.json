@@ -1,0 +1,18 @@
+{
+  "name": "web-components-kickstart",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Guillaume Hivert <hivert.is.coming@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "serve -s build"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.8.7",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/plugin-transform-react-jsx": "^7.8.3",
+    "serve": "^11.3.0"
+  }
+}

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Web Components Kickstart</title>
+  <script type="module">
+    import FlagIcon from '/main.js'
+    customElements.define('coucou-coucou', FlagIcon)
+    setTimeout(() => {
+      console.log('Changement!')
+      const element = document.getElementById('test')
+      element.countryCode = "jp"
+      element.test = "test"
+    }, 1000)
+  </script>
+</head>
+
+<body>
+  <coucou-coucou id="test" country-code="fr"></coucou-coucou>
+</body>
+
+</html>
