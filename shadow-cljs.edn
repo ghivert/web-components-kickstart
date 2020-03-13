@@ -1,0 +1,11 @@
+{:source-paths ["src"]
+ :dependencies [[proto-repl "0.3.1"]]
+ :nrepl {:port 60000}
+ :builds {:app {:target :browser
+                :output-dir "public/js"
+                :asset-path "/js"
+                :compiler-options {:output-feature-set :es-next}
+                :modules {:main {:init-fn main/main!}}
+                :devtools {:after-load main/reload!
+                           :http-root "public"
+                           :http-port 7070}}}}

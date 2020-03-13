@@ -5,6 +5,7 @@
   "author": "Guillaume Hivert <hivert.is.coming@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "cljs": "shadow-cljs watch app",
     "dev": "serve -s build"
   },
   "dependencies": {},
@@ -13,6 +14,7 @@
     "@babel/core": "^7.8.7",
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-transform-react-jsx": "^7.8.3",
-    "serve": "^11.3.0"
+    "serve": "^11.3.0",
+    "shadow-cljs": "^2.8.92"
   }
 }

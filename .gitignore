@@ -3,4 +3,6 @@ node_modules/
 .DS_Store
 Thumbs.db
 
-public/build
+public/js
+
+.shadow-cljs
