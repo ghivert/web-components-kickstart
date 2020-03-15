@@ -50,5 +50,5 @@
   (.define js/customElements "awesome-counter" awesome-counter-constructor))
 
 (defn awesome-counter [{:keys [value]}]
-  (doto object (js/document.createElement "awesome-counter")
+  (doto (js/document.createElement "awesome-counter")
         (.setAttribute "value" value)))
