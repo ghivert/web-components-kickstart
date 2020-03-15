@@ -3,8 +3,8 @@
 
 (defn connected-callback []
   (this-as this
-           (.attachShadow this (clj->js {:mode "open"}))
-           (.render this)))
+    (.attachShadow this (clj->js {:mode "open"}))
+    (.render this)))
 
 (defn select-value [value]
   (let [try-number (js/Number value)]
@@ -15,9 +15,9 @@
 (defn state-attributes-changed [state]
   (fn [name old-value new-value]
     (this-as this
-             (let [value (select-value new-value)]
-               (swap! state (fn [st] (assoc st (keyword name) value)))
-               (.render this)))))
+      (let [value (select-value new-value)]
+        (swap! state (fn [st] (assoc st (keyword name) value)))
+        (.render this)))))
 
 (defn extract-informations [[first args & children]]
   (if (map? args)
