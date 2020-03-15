@@ -1,37 +1,26 @@
-(ns main)
+(ns main
+  (:require [component :refer-macros [defcomponent]]))
 
-(defn attributes-changed [state]
-  (fn [name old-value new-value]
-    (this-as this
-             (swap! state #(assoc % (keyword name) new-value))
-             (.render this))))
+(defcomponent awesome-counter [value]
+  [:div "Hello world! This is an awesome counter!"
+   [:div
+    [:button {:on-click #(set-state :value (+ value 1))} "+"]
+    [:span (str value)]
+    [:button {:on-click #(set-state :value (- value 1))} "-"]]])
 
-(defn render [state]
-  (fn []
-    (this-as this
-             (js/console.log this)
-             (println (str "state is " @state))
-             (println "Hello from rendering!"))))
-
-(defn connected-callback []
-  (this-as this
-           (.attachShadow this #js {:mode "open"})))
-
-(defn component []
-  (js/Reflect.construct js/HTMLElement (clj->js []) component))
-
-(let [component-prototype (js/Object.create (.-prototype js/HTMLElement))
-      state (atom {})
-      lifecycles (clj->js {"attributeChangedCallback" {:value (attributes-changed state)}
-                           "connectedCallback" {:value connected-callback}
-                           "render" {:value (render state)}})]
-  (js/Object.defineProperties component-prototype lifecycles)
-  (set! (.-prototype component) component-prototype)
-  (set! (.-observedAttributes component) (clj->js ["country"]))
-  (.define js/customElements "muuuuss-component" component))
+(comment (defcomponent lifecycled-component
+           {:on-enter (fn [state] (println "Enter"))
+            :on-update (fn [state] (println "Update"))
+            :on-exit (fn [state] (println "Out"))
+            :props ["value"]
+            :render (fn [state] [:div.class "Render"])
+            :hook (fn [state] (swap! state
+                                     #(assoc % :value (+ (:value %) 1))))}))
 
 (defn main! []
-  (println "Main"))
+  (println "Main")
+  (-> (js/document.getElementById "app")
+      (.appendChild (awesome-counter {:value 0}))))
 
 (defn reload! []
   (println "Reload"))
