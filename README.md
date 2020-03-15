@@ -19,9 +19,9 @@ Ok, the hard part. Ready? Go.
 (defcomponent my-awesome-component [value]
   [:div "Hello world! This is an awesome counter!"
    [:div
-    [:button {:on-click #(set-state :value (+ value 1))} "+"]
+    [:button {:on-click #(set-attribute :value (+ value 1))} "+"]
     [:span (str value)]
-    [:button {:on-click #(set-state :value (- value 1))} "-"]]])
+    [:button {:on-click #(set-attribute :value (- value 1))} "-"]]])
 
 (defn -main []
   (-> (js/document.getElementById "app")

@@ -7,7 +7,7 @@
 (defn- state-renderer [attributes content]
   `(fn []
      (cljs.core/this-as ~'this
-                        (let [~'set-state (fn [~'key ~'value]
+                        (let [~'set-attribute (fn [~'key ~'value]
                                             (.setAttribute ~'this (name ~'key) ~'value)
                                             ; (swap! ~attributes (fn [~'st] (assoc ~'st ~'key ~'value)))
                                             (.render ~'this))
