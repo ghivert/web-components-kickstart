@@ -56,6 +56,7 @@
 
 (defn do-the-render [root hiccup]
   (let [node (.-shadowRoot root)]
-    (doseq [child (array-seq (.-children node))]
-      (.removeChild node child))
-    (.appendChild node (paint-children hiccup))))
+    (when node
+      (doseq [child (array-seq (.-children node))]
+        (.removeChild node child))
+      (.appendChild node (paint-children hiccup)))))
