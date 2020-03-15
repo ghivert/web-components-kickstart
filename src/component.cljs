@@ -12,6 +12,11 @@
       value
       try-number)))
 
+(defn attributes-setter [this]
+  (fn [key value]
+    (.setAttribute this (name key) value)
+    (.render this)))
+
 (defn state-attributes-changed [state]
   (fn [name old-value new-value]
     (this-as this

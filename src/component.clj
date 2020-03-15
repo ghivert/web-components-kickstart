@@ -6,13 +6,10 @@
 
 (defn- state-renderer [attributes content]
   `(fn []
-     (cljs.core/this-as ~'this
-       (let [~'set-attribute (fn [~'key ~'value]
-                               (.setAttribute ~'this (name ~'key) ~'value)
-                               ; (swap! ~attributes (fn [~'st] (assoc ~'st ~'key ~'value)))
-                               (.render ~'this))
-             render# ~content]
-         (component/do-the-render ~'this (render# (deref ~attributes)))))))
+     (cljs.core/this-as this#
+       (let [~'set-attribute (component/attributes-setter this#)
+             hiccup# (~content @~attributes)]
+         (component/do-the-render this# hiccup#)))))
 
 (defn generate-attributes-names [{:keys [props] :or {props []}}]
   (mapv str props))
