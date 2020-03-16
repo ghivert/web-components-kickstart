@@ -54,8 +54,19 @@
        ~properties
        ~builder)))
 
+(defn- string->symbol [string]
+  `~(symbol string))
+
+(defn- props->symbols [props]
+  (mapv string->symbol props))
+
+(defn- update-props-in-args [args]
+  (assoc args :props (props->symbols (:props args))))
+
 (defmacro defcomponent
-  ([name props] (generate-component name props))
+  ([name args]
+   (let [props (update-props-in-args args)]
+     (generate-component name props)))
   ([name args & body]
    (let [props {:props args
                 :render `(fn [{:keys ~args}] ~@body)}]
