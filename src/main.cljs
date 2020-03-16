@@ -1,12 +1,6 @@
 (ns main
-  (:require [component :refer-macros [defcomponent]]))
-
-(defcomponent awesome-counter [value]
-  [:div "Hello world! This is an awesome counter!"
-   [:div
-    [:button {:on-click #(set-attribute :value (+ value 1))} "+"]
-    [:span (str value)]
-    [:button {:on-click #(set-attribute :value (- value 1))} "-"]]])
+  (:require [web-component.core :refer-macros [defcomponent]]
+            [examples]))
 
 (comment (defcomponent lifecycled-component
            {:on-enter (fn [state] (println "Enter"))
@@ -20,7 +14,7 @@
 (defn main! []
   (println "Main")
   (-> (js/document.getElementById "app")
-      (.appendChild (awesome-counter {:value 0}))))
+      (.appendChild (examples/awesome-counter {:value 0}))))
 
 (defn reload! []
   (println "Reload"))
