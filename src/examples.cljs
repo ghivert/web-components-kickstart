@@ -14,7 +14,7 @@
    :on-exit (fn [this] (println "Out"))
    :props ["value"]
    :render (fn [{:keys [value]}]
-             [:div "Hello world! This is an awesome counter!"
+             [:div "Hello world! This is a lifecycle counter!"
               [:div
                [:button {:on-click #(set-attribute :value (+ value 1))} "+"]
                [:span (str value)]
