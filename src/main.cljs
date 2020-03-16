@@ -4,8 +4,9 @@
 
 (defn main! []
   (println "Main")
-  (-> (js/document.getElementById "app")
-      (.appendChild (examples/awesome-counter {:value 0}))))
+  (doto (js/document.getElementById "app")
+        (.appendChild (examples/awesome-counter {:value 0}))
+        (.appendChild (examples/lifecycled-component {:value 0}))))
 
 (defn reload! []
   (println "Reload"))
