@@ -18,6 +18,4 @@
               [:div
                [:button {:on-click #(set-attribute :value (+ value 1))} "+"]
                [:span (str value)]
-               [:button {:on-click #(set-attribute :value (- value 1))} "-"]]])
-   :hook (fn [state] (swap! state
-                            #(assoc % :value (+ (:value %) 1))))})
+               [:button {:on-click #(set-attribute :value (- value 1))} "-"]]])})
