@@ -19,7 +19,7 @@
         root-sym (gensym 'root)]
     `(let [~attributes-sym (atom {})
            ~root-sym (atom nil)
-           attributes-changed# (web-component.core/state-attributes-changed ~attributes-sym)
+           attributes-changed# (web-component.core/state-attributes-changed ~attributes-sym ~(:on-update props))
            render# ~(state-renderer root-sym attributes-sym (:render props))
            component-prototype# (js/Object.create (.-prototype js/HTMLElement))
            lifecycles# (cljs.core/clj->js

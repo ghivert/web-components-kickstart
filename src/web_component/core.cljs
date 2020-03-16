@@ -34,12 +34,14 @@
     (.setAttribute this (name key) value)
     (.render this)))
 
-(defn- state-attributes-changed [state]
+(defn- state-attributes-changed [state on-update]
   (fn [name old-value new-value]
     (this-as this
       (let [value (select-value new-value)]
         (swap! state (fn [st] (assoc st (keyword name) value)))
-        (.render this)))))
+        (.render this)
+        (when-not (nil? on-update)
+          (on-update this))))))
 
 (defn- extract-informations [[first args & children]]
   (if (map? args)
