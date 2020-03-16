@@ -4,25 +4,27 @@
   `(defn ~name []
      (js/Reflect.construct js/HTMLElement (cljs.core/clj->js []) ~name)))
 
-(defn- state-renderer [attributes content]
+(defn- state-renderer [root attributes content]
   `(fn []
      (cljs.core/this-as this#
        (let [~'set-attribute (web-component.core/attributes-setter this#)
              hiccup# (~content @~attributes)]
-         (web-component.core/do-the-render this# hiccup#)))))
+         (web-component.core/do-the-render ~root hiccup#)))))
 
 (defn generate-attributes-names [{:keys [props] :or {props []}}]
   (mapv str props))
 
 (defn- generate-component-properties [component-name name props]
-  (let [attributes-sym (gensym 'attributes)]
+  (let [attributes-sym (gensym 'attributes)
+        root-sym (gensym 'root)]
     `(let [~attributes-sym (atom {})
+           ~root-sym (atom nil)
            attributes-changed# (web-component.core/state-attributes-changed ~attributes-sym)
-           render# ~(state-renderer attributes-sym (:render props))
+           render# ~(state-renderer root-sym attributes-sym (:render props))
            component-prototype# (js/Object.create (.-prototype js/HTMLElement))
            lifecycles# (cljs.core/clj->js
                         {"attributeChangedCallback" {:value attributes-changed#}
-                         "connectedCallback" {:value web-component.core/connected-callback}
+                         "connectedCallback" {:value (web-component.core/connected-callback ~root-sym ~(meta component-name))}
                          "render" {:value render#}})]
        (js/Object.defineProperties component-prototype# lifecycles#)
        (set! (.-prototype ~name) component-prototype#)

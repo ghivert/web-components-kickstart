@@ -1,10 +1,25 @@
 (ns web-component.core
   (:require [clojure.string :as string]))
 
-(defn connected-callback []
-  (this-as this
-    (.attachShadow this (clj->js {:mode "open"}))
-    (.render this)))
+(defn- attach-shadow [root this mode]
+  (if (nil? mode)
+    (reset! root this)
+    (let [shadow-root (.attachShadow this (clj->js {:mode mode}))]
+      (reset! root shadow-root))))
+
+(defn- add-shadow-root! [root this metadata]
+  (let [{:keys [shadow] :or {shadow nil}} metadata]
+    (case shadow
+      :open   (attach-shadow root this "open")
+      :closed (attach-shadow root this "closed")
+      true    (attach-shadow root this "open")
+      (attach-shadow root this nil))))
+
+(defn- connected-callback [root metadata]
+  (fn []
+    (this-as this
+      (add-shadow-root! root this metadata)
+      (.render this))))
 
 (defn select-value [value]
   (let [try-number (js/Number value)]
@@ -59,8 +74,8 @@
       (add-children paint children)
       paint)))
 
-(defn do-the-render [root hiccup]
-  (let [node (.-shadowRoot root)]
+(defn- do-the-render [root hiccup]
+  (let [node @root]
     (when node
       (doseq [child (array-seq (.-children node))]
         (.removeChild node child))

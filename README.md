@@ -23,6 +23,20 @@ Ok, the hard part. Ready? Go.
     [:span (str value)]
     [:button {:on-click #(set-attribute :value (- value 1))} "-"]]])
 
+(defcomponent ^:shadow my-awesome-component [value]
+  [:div "Hello world! This is an awesome counter!"
+   [:div
+    [:button {:on-click #(set-attribute :value (+ value 1))} "+"]
+    [:span (str value)]
+    [:button {:on-click #(set-attribute :value (- value 1))} "-"]]])
+
+(defcomponent ^{:shadow :closed} my-awesome-component [value]
+  [:div "Hello world! This is an awesome counter!"
+   [:div
+    [:button {:on-click #(set-attribute :value (+ value 1))} "+"]
+    [:span (str value)]
+    [:button {:on-click #(set-attribute :value (- value 1))} "-"]]])
+
 (defn -main []
   (-> (js/document.getElementById "app")
     (.appendChild (awesome-counter {:value 0}))))
