@@ -15,11 +15,13 @@
       true    (attach-shadow root this "open")
       (attach-shadow root this nil))))
 
-(defn- connected-callback [root metadata]
+(defn- connected-callback [root metadata on-enter]
   (fn []
     (this-as this
       (add-shadow-root! root this metadata)
-      (.render this))))
+      (.render this)
+      (when-not (nil? on-enter)
+        (on-enter this)))))
 
 (defn- select-value [value]
   (let [try-number (js/Number value)]

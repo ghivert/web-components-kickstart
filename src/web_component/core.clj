@@ -24,7 +24,7 @@
            component-prototype# (js/Object.create (.-prototype js/HTMLElement))
            lifecycles# (cljs.core/clj->js
                         {"attributeChangedCallback" {:value attributes-changed#}
-                         "connectedCallback" {:value (web-component.core/connected-callback ~root-sym ~(meta component-name))}
+                         "connectedCallback" {:value (web-component.core/connected-callback ~root-sym ~(meta component-name) ~(:on-enter props))}
                          "render" {:value render#}})]
        (js/Object.defineProperties component-prototype# lifecycles#)
        (set! (.-prototype ~name) component-prototype#)
