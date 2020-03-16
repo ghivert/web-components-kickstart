@@ -1,4 +1,4 @@
-(ns component)
+(ns web-component.core)
 
 (defn- generate-component-constructor [name]
   `(defn ~name []
@@ -7,9 +7,9 @@
 (defn- state-renderer [attributes content]
   `(fn []
      (cljs.core/this-as this#
-       (let [~'set-attribute (component/attributes-setter this#)
+       (let [~'set-attribute (web-component.core/attributes-setter this#)
              hiccup# (~content @~attributes)]
-         (component/do-the-render this# hiccup#)))))
+         (web-component.core/do-the-render this# hiccup#)))))
 
 (defn generate-attributes-names [{:keys [props] :or {props []}}]
   (mapv str props))
@@ -17,18 +17,20 @@
 (defn- generate-component-properties [component-name name props]
   (let [attributes-sym (gensym 'attributes)]
     `(let [~attributes-sym (atom {})
-           attributes-changed# (component/state-attributes-changed ~attributes-sym)
+           attributes-changed# (web-component.core/state-attributes-changed ~attributes-sym)
            render# ~(state-renderer attributes-sym (:render props))
            component-prototype# (js/Object.create (.-prototype js/HTMLElement))
            lifecycles# (cljs.core/clj->js
                         {"attributeChangedCallback" {:value attributes-changed#}
-                         "connectedCallback" {:value component/connected-callback}
+                         "connectedCallback" {:value web-component.core/connected-callback}
                          "render" {:value render#}})]
        (js/Object.defineProperties component-prototype# lifecycles#)
        (set! (.-prototype ~name) component-prototype#)
        (set! (.-observedAttributes ~name) (cljs.core/clj->js
                                            ~(generate-attributes-names props)))
-       (.define js/customElements ~(str component-name) ~name))))
+       (if (js/customElements.get ~(str component-name))
+         (js/location.reload)
+         (.define js/customElements ~(str component-name) ~name)))))
 
 (defn- generate-attribute-setter [attribute]
   `(.setAttribute ~(str attribute) ~attribute))

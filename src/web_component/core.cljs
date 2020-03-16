@@ -1,4 +1,4 @@
-(ns component
+(ns web-component.core
   (:require [clojure.string :as string]))
 
 (defn connected-callback []
