@@ -23,6 +23,12 @@
       (when-not (nil? on-enter)
         (on-enter this)))))
 
+(defn- disconnected-callback [on-exit]
+  (fn []
+    (this-as this
+      (when-not (nil? on-exit)
+        (on-exit this)))))
+
 (defn- select-value [value]
   (let [try-number (js/Number value)]
     (if (js/isNaN try-number)
