@@ -8,3 +8,11 @@
     [:span (str value)]
     [:button {:on-click #(set-attribute :value (- value 1))} "-"]]])
 
+(comment (defcomponent lifecycled-component
+           {:on-enter (fn [state] (println "Enter"))
+            :on-update (fn [state] (println "Update"))
+            :on-exit (fn [state] (println "Out"))
+            :props ["value"]
+            :render (fn [state] [:div.class "Render"])
+            :hook (fn [state] (swap! state
+                                     #(assoc % :value (+ (:value %) 1))))}))
