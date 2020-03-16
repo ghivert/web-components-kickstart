@@ -21,36 +21,36 @@
       (add-shadow-root! root this metadata)
       (.render this))))
 
-(defn select-value [value]
+(defn- select-value [value]
   (let [try-number (js/Number value)]
     (if (js/isNaN try-number)
       value
       try-number)))
 
-(defn attributes-setter [this]
+(defn- attributes-setter [this]
   (fn [key value]
     (.setAttribute this (name key) value)
     (.render this)))
 
-(defn state-attributes-changed [state]
+(defn- state-attributes-changed [state]
   (fn [name old-value new-value]
     (this-as this
       (let [value (select-value new-value)]
         (swap! state (fn [st] (assoc st (keyword name) value)))
         (.render this)))))
 
-(defn extract-informations [[first args & children]]
+(defn- extract-informations [[first args & children]]
   (if (map? args)
     [first args children]
     [first {} (cons args children)]))
 
-(defn listener-type [string-attribute]
+(defn- listener-type [string-attribute]
   (-> string-attribute
       (string/split #"-")
       rest
       string/join))
 
-(defn add-attributes [paint args]
+(defn- add-attributes [paint args]
   (mapv (fn [[attribute value]]
           (let [string-attribute (name attribute)]
             (if (string/starts-with? string-attribute "on")
@@ -60,12 +60,12 @@
 
 (declare paint-children)
 
-(defn add-children [node children]
+(defn- add-children [node children]
   (->> children
        (mapv paint-children)
        (mapv #(.appendChild node %))))
 
-(defn paint-children [hiccup]
+(defn- paint-children [hiccup]
   (if (string? hiccup)
     (js/document.createTextNode hiccup)
     (let [[first args children] (extract-informations hiccup)
