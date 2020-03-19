@@ -19,3 +19,7 @@
                [:button {:on-click #(set-attribute :value (+ value 1))} "+"]
                [:span (str value)]
                [:button {:on-click #(set-attribute :value (- value 1))} "-"]]])})
+
+(defcomponent ^:shadow app-root []
+  [:awesome-counter {:value 0 :test true}]
+  [:lifecycled-component {:value 64}])

@@ -1,12 +1,11 @@
 (ns main
-  (:require [web-component.core :refer-macros [defcomponent]]
+  (:require [web-component.core :as wc :refer-macros [defcomponent]]
             [examples]))
 
 (defn main! []
   (println "Main")
-  (doto (js/document.getElementById "app")
-        (.appendChild (examples/awesome-counter {:value 0}))
-        (.appendChild (examples/lifecycled-component {:value 0}))))
+  (let [app (js/document.getElementById "app")]
+    (wc/render! app (examples/app-root))))
 
 (defn reload! []
   (println "Reload"))
