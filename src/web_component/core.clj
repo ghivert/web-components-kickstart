@@ -36,7 +36,7 @@
          (.define js/customElements ~(str component-name) ~name)))))
 
 (defn- generate-attribute-setter [attribute]
-  `(.setAttribute ~(str attribute) ~attribute))
+  `(web-component.core/add-attribute ~(str attribute) ~attribute))
 
 (defn- generate-component-builder [name props]
   (let [attributes (:props props)

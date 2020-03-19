@@ -91,6 +91,14 @@
         (.removeChild node child))
       (.appendChild node (paint-children hiccup)))))
 
+(defn- add-attribute [node name value]
+  (when-not (nil? value)
+    (if (boolean? value)
+      (if value
+        (.setAttribute node name "")
+        (.removeAttribute node name))
+      (.setAttribute node name value))))
+
 (defn render! [node & children]
   (doseq [child children]
     (.appendChild node child)))
