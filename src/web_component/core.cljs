@@ -90,3 +90,7 @@
       (doseq [child (array-seq (.-children node))]
         (.removeChild node child))
       (.appendChild node (paint-children hiccup)))))
+
+(defn render! [node & children]
+  (doseq [child children]
+    (.appendChild node child)))
