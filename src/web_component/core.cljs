@@ -6,6 +6,13 @@
   (if (nil? mode)
     (reset! root this)
     (let [shadow-root (.attachShadow this (clj->js {:mode mode}))]
+      (js/Object.defineProperty shadow-root "tagName"
+                                #js {:get (fn []
+                                            (string/lower-case
+                                             (.-tagName this)))})
+      (js/Object.defineProperty shadow-root "attributes"
+                                #js {:get (fn []
+                                            (.-attributes this))})
       (reset! root shadow-root))))
 
 (defn- add-shadow-root! [root this metadata]
