@@ -1,5 +1,6 @@
 (ns web-component.core
-  (:require [clojure.string :as string]))
+  (:require [clojure.string :as string]
+            [web-component.vdom]))
 
 (defn- attach-shadow [root this mode]
   (if (nil? mode)
@@ -48,48 +49,6 @@
         (.render this)
         (when-not (nil? on-update)
           (on-update this))))))
-
-(defn- extract-informations [[first args & children]]
-  (if (map? args)
-    [first args children]
-    [first {} (cons args children)]))
-
-(defn- listener-type [string-attribute]
-  (-> string-attribute
-      (string/split #"-")
-      rest
-      string/join))
-
-(defn- add-attributes [paint args]
-  (mapv (fn [[attribute value]]
-          (let [string-attribute (name attribute)]
-            (if (string/starts-with? string-attribute "on")
-              (.addEventListener paint (listener-type string-attribute) value)
-              (.setAttribute paint (name attribute) value))))
-        args))
-
-(declare paint-children)
-
-(defn- add-children [node children]
-  (->> children
-       (mapv paint-children)
-       (mapv #(.appendChild node %))))
-
-(defn- paint-children [hiccup]
-  (if (string? hiccup)
-    (js/document.createTextNode hiccup)
-    (let [[first args children] (extract-informations hiccup)
-          paint (js/document.createElement (name first))]
-      (add-attributes paint args)
-      (add-children paint children)
-      paint)))
-
-(defn- do-the-render [root hiccup]
-  (let [node @root]
-    (when node
-      (doseq [child (array-seq (.-children node))]
-        (.removeChild node child))
-      (.appendChild node (paint-children hiccup)))))
 
 (defn- constructor-add-attribute [node name value]
   (when-not (nil? value)

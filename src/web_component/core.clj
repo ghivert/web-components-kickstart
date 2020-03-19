@@ -9,7 +9,7 @@
      (cljs.core/this-as this#
        (let [~'set-attribute (web-component.core/attributes-setter this#)
              hiccup# (~content @~attributes)]
-         (web-component.core/do-the-render ~root hiccup#)))))
+         (web-component.vdom/render ~root hiccup#)))))
 
 (defn generate-attributes-names [{:keys [props] :or {props []}}]
   (mapv str props))
