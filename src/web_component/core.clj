@@ -41,9 +41,12 @@
 (defn- generate-component-builder [name props]
   (let [attributes (:props props)
         attributes-setters (mapv generate-attribute-setter attributes)]
-    `(defn ~name [{:keys ~attributes}]
-       (doto (js/document.createElement ~(str name))
-             ~@attributes-setters))))
+    (if (= 0 (count attributes))
+      `(defn ~name []
+         (js/document.createElement ~(str name)))
+      `(defn ~name [{:keys ~attributes}]
+         (doto (js/document.createElement ~(str name))
+               ~@attributes-setters)))))
 
 (defn- generate-component [name props]
   (let [constructor-name (gensym name)
