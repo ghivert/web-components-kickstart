@@ -91,7 +91,7 @@
         (.removeChild node child))
       (.appendChild node (paint-children hiccup)))))
 
-(defn- add-attribute [node name value]
+(defn- constructor-add-attribute [node name value]
   (when-not (nil? value)
     (if (boolean? value)
       (if value
