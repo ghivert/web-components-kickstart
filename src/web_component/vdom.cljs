@@ -1,5 +1,7 @@
 (ns web-component.vdom
-  (:require [clojure.string :as string]))
+  (:require [clojure.string :as string]
+            [hiccup.vdom]
+            [hiccup.core]))
 
 (declare paint-children)
 
@@ -36,9 +38,12 @@
       (add-children paint children)
       paint)))
 
-(defn- render [root hiccup]
+(defn render [root hiccup]
+  ;; root is an atom because it is required to use it with Shadow DOM.
   (let [node @root]
     (when node
-      (doseq [child (array-seq (.-children node))]
-        (.removeChild node child))
-      (.appendChild node (paint-children hiccup)))))
+      (if (vector? hiccup)
+        (hiccup.vdom/diff-children node (hiccup.core/concat-children hiccup))
+        (do
+          (println "Your render is not a valid Hiccup.")
+          (println hiccup))))))

@@ -72,6 +72,8 @@
    (let [props (update-props-in-args args)]
      (generate-component name props)))
   ([name args & body]
-   (let [props {:props args
-                :render `(fn [{:keys ~args}] ~@body)}]
+   (let [render `(fn [{:keys ~args}] ~(vec body))
+         props {:props args
+                :render render}]
+     (println render)
      (generate-component name props))))
