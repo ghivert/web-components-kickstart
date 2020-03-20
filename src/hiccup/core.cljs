@@ -9,19 +9,30 @@
        (concat-children children (conj acc child)))
      acc)))
 
-(defn reconcile [[keyword props & children]]
-  (let [is-map? (map? props)
-        all-children (if is-map? children (cons props children))]
-    [(name keyword)
-     (if is-map? props {})
-     (concat-children all-children)]))
+(defn reconcile [vec-dom]
+  (if (string? vec-dom)
+    ["" {} []]
+    (let [[keyword props & children] vec-dom
+          is-map? (map? props)
+          all-children (if is-map? children (cons props children))]
+      [(name keyword)
+       (if is-map? props {})
+       (concat-children all-children)])))
 
-(defn tag-name [[key]]
-  (name key))
+(defn tag-name [vec-dom]
+  (if (string? vec-dom)
+    ""
+    (first (name vec-dom))))
 
-(defn props [[_ p]]
-  (if (map? p) p {}))
+(defn props [vec-dom]
+  (if (string? vec-dom)
+    {}
+    (let [[_ p] vec-dom]
+      (if (map? p) p {}))))
 
-(defn children [[_ p & children]]
-  (let [all-children (if (map? p) children (cons p children))]
-    (concat-children all-children)))
+(defn children [vec-dom]
+  (if (string? vec-dom)
+    []
+    (let [[_ p & children] vec-dom
+          all-children (if (map? p) children (cons p children))]
+      (concat-children all-children))))
