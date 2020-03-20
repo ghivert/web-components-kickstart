@@ -22,7 +22,7 @@
 (defn tag-name [vec-dom]
   (if (string? vec-dom)
     ""
-    (first (name vec-dom))))
+    (name (first vec-dom))))
 
 (defn props [vec-dom]
   (if (string? vec-dom)
