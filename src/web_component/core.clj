@@ -1,4 +1,5 @@
-(ns web-component.core)
+(ns web-component.core
+  (:require [clojure.string :refer [starts-with?]]))
 
 (defn- generate-component-constructor [name]
   `(defn ~name []
@@ -14,19 +15,29 @@
 (defn generate-attributes-names [{:keys [props] :or {props []}}]
   (mapv str props))
 
+(defn- generate-props-getters [attributes-sym props]
+  (reduce (fn [acc key]
+            (if (starts-with? (str key) "on")
+              acc
+              (assoc acc (str key) `{:get (fn [] (get @~attributes-sym ~(keyword key)))})))
+          {} props))
+
 (defn- generate-component-properties [component-name name props]
   (let [attributes-sym (gensym 'attributes)
         root-sym (gensym 'root)]
     `(let [~attributes-sym (atom {})
            ~root-sym (atom nil)
            attributes-changed# (web-component.core/state-attributes-changed ~attributes-sym ~(:on-update props))
+           getters# ~(generate-props-getters attributes-sym (:props props))
            render# ~(state-renderer root-sym attributes-sym (:render props))
            component-prototype# (js/Object.create (.-prototype js/HTMLElement))
            lifecycles# (cljs.core/clj->js
-                        {"attributeChangedCallback" {:value attributes-changed#}
-                         "connectedCallback" {:value (web-component.core/connected-callback ~root-sym ~(meta component-name) ~(:on-enter props))}
-                         "render" {:value render#}
-                         "disconnectedCallback" {:value (web-component.core/disconnected-callback ~(:on-exit props))}})]
+                        (merge
+                         getters#
+                         {"attributeChangedCallback" {:value attributes-changed#}
+                          "connectedCallback" {:value (web-component.core/connected-callback ~root-sym ~(meta component-name) ~(:on-enter props))}
+                          "render" {:value render#}
+                          "disconnectedCallback" {:value (web-component.core/disconnected-callback ~(:on-exit props))}}))]
        (js/Object.defineProperties component-prototype# lifecycles#)
        (set! (.-prototype ~name) component-prototype#)
        (set! (.-observedAttributes ~name) (cljs.core/clj->js
