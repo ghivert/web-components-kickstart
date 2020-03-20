@@ -1,6 +1,6 @@
 (ns hiccup.core)
 
-(defn- concat-children
+(defn concat-children
   ([children] (concat-children children []))
   ([[child & children] acc]
    (if (some? child)
