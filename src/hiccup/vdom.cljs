@@ -5,18 +5,58 @@
 (declare diff patch)
 
 (defn isolate-props-events [props]
-  (split-with (fn [param]
-                (starts-with? (name (first param)) "on"))
-              props))
+  (let [splitter (fn [[param]]
+                   (if (starts-with? (name param) "on") :events :props))]
+    (group-by splitter props)))
+
+(defn reduce-events-props [props]
+  (println "I'm in props" props)
+  (fn [[update delete] [attr-name attr-val]]
+    (let [prop (get props (keyword attr-name))]
+      (if (some? prop)
+        (if (js/Object.is attr-val prop)
+          [update delete]
+          [(assoc update attr-name prop) delete])
+        [update (cons attr-name delete)]))))
+
+(defn retain-events-props-to-add [props update delete]
+  (println "retain-events-props-to-add:" props update delete)
+  (filter (fn [[key value]]
+            (println "Key!!!" key)
+            (let [entry (name key)]
+              (not (or
+                    (contains? update entry)
+                    (contains? delete entry)))))
+          props))
 
 (defn intersect-props [node props]
-  (let [attrs (.-attributes node)]
-    [{} {} {}]))
+  (let [attrs (js->clj (js/Object.values (.-attributes node)))
+        init [{} []]
+        normalized-attrs (map (fn [val] [(.-name val) (.-nodeValue val)]) attrs)
+        [update delete] (reduce (reduce-events-props props) init normalized-attrs)
+        add (retain-events-props-to-add props update delete)]
+    [add update delete]))
+
+(defn intersect-events [node events]
+  (let [evts (or (.-__events node) [])
+        init [{} []]
+        [update delete] (reduce (reduce-events-props events) init evts)
+        add (retain-events-props-to-add events update delete)]
+    [add update delete]))
+
+(defn update-all-props [node [props-add props-update props-delete]])
+
+(defn update-all-events [node [events-add events-update events-delete]])
 
 (defn update-node-props [node all-props]
-  (let [[props events] (isolate-props-events all-props)
-        [to-add to-update to-delete] (intersect-props node props)]
-    node))
+  (let [{:keys [events props]} (isolate-props-events all-props)
+        final-props (intersect-props node props)
+        final-events (intersect-events node events)]
+    (println "All events" events)
+    (println "All props" props)
+    (doto node
+          (update-all-props final-props)
+          (update-all-events final-events))))
 
 (defn remove-remaining-children [children]
   (doseq [child children]
